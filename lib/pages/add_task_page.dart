@@ -54,10 +54,13 @@ class _AddTaskPageState extends State<AddTaskPage> {
                label: "Note",
                hintText: "Enter note here", 
             ),
+            const InputField(
+              label: "Date",
+              hintText: "",
+            ),
+            
 
 
-
-      
           ]
       ),
 
