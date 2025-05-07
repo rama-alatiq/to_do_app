@@ -10,6 +10,7 @@ class AddTaskPage extends StatefulWidget {
 }
 
 class _AddTaskPageState extends State<AddTaskPage> {
+  int selectedColor = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,19 +80,51 @@ class _AddTaskPageState extends State<AddTaskPage> {
                       hintText: "",
                     ),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Row(
                           children: List.generate(
                             3,
-                            (index) => CircleAvatar(
-                              backgroundColor: index == 0
-                                  ? Colors.pink
-                                  : index == 1
-                                      ? Colors.orange
-                                      : Colors.amber,
+                            (index) => GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  selectedColor = index;
+                                });
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 7),
+                                child: CircleAvatar(
+                                  radius: 16,
+                                  backgroundColor: index == 0
+                                      ? Colors.pink
+                                      : index == 1
+                                          ? Colors.orange
+                                          : Colors.amber,
+                                  child: selectedColor == index
+                                      ? const Icon(
+                                          Icons.done,
+                                          color: Colors.white,
+                                          weight: 14,
+                                          size: 16,
+                                        )
+                                      : null,
+                                ),
+                              ),
                             ),
                           ),
-                        )
+                        ),
+                        FilledButton(
+                          onPressed: () {},
+                          style:  ButtonStyle(
+                            backgroundColor: const WidgetStatePropertyAll(Colors.pink),
+                            shape: WidgetStatePropertyAll(RoundedRectangleBorder(
+                              borderRadius:BorderRadius.circular(12)
+                            ))
+                          ),
+                          child: const Text(
+                            "Create Task",
+                          ),
+                        ),
                       ],
                     )
                   ]),
