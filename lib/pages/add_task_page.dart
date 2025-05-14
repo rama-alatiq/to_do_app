@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:to_do_app/fonts.dart';
 import 'package:to_do_app/widgets/inputField.dart';
 
@@ -11,6 +12,15 @@ class AddTaskPage extends StatefulWidget {
 
 class _AddTaskPageState extends State<AddTaskPage> {
   int selectedColor = 0;
+  var selectedDate = DateTime.now();
+  var startTIme = DateFormat('hh:mm a').format(DateTime.now());
+  var endTIme = DateFormat('hh:mm a')
+      .format(DateTime.now().add(const Duration(minutes: 15)));
+  var selectedRemind = 5;
+  var remindList = [5, 10, 15, 20];
+  var selectedRepeat = 'None';
+  var repeatList = ['None', 'Daily', 'Weekly', 'Monthly'];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,33 +61,137 @@ class _AddTaskPageState extends State<AddTaskPage> {
                       label: "Note",
                       hintText: "Enter note here",
                     ),
-                    const InputField(
+                    InputField(
                       label: "Date",
-                      hintText: "",
+                      hintText: DateFormat.yMMMd().format(selectedDate),
+                      icon: IconButton(
+                        onPressed: () => getDateFromUser(),
+                        icon: const Icon(Icons.calendar_today_outlined),
+                        color: Colors.grey,
+                      ),
                     ),
-                    const Row(
+                    Row(
                       children: [
                         Expanded(
                           child: InputField(
-                            label: "Start Date",
-                            hintText: "",
+                            label: "Start Time",
+                            hintText: startTIme,
+                            icon: IconButton(
+                              onPressed: () =>
+                                  _getTimeFromUser(isStartTime: true),
+                              icon: const Icon(Icons.access_time_rounded),
+                              color: Colors.grey,
+                            ),
                           ),
                         ),
                         Expanded(
                           child: InputField(
-                            label: "End Date",
-                            hintText: "",
+                            label: "End Time",
+                            hintText: endTIme,
+                            icon: IconButton(
+                              onPressed: () =>
+                                  _getTimeFromUser(isStartTime: false),
+                              icon: const Icon(Icons.access_time_rounded),
+                              color: Colors.grey,
+                            ),
                           ),
-                        ),
+                        )
                       ],
                     ),
-                    const InputField(
+                    InputField(
                       label: "Remind",
-                      hintText: "",
+                      hintText: '$selectedRemind minutes early',
+                      icon: Row(
+                        children: [
+                          DropdownButton(
+                            borderRadius: BorderRadius.circular(10),
+                            dropdownColor: Colors.pink,
+                            items: remindList
+                                .map(
+                                  (value) => DropdownMenuItem(
+                                    value: value,
+                                    child: Text(
+                                      '$value',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                            icon: const Icon(
+                              Icons.keyboard_arrow_down,
+                              color: Colors.grey,
+                            ),
+                            iconSize: 32,
+                            elevation: 4,
+                            underline: Container(
+                              height: 0,
+                            ),
+                            style: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 16,
+                            ),
+                            onChanged: (newValue) {
+                              setState(() {
+                                selectedRemind = newValue as int;
+                              });
+                            },
+                          ),
+                          const SizedBox(
+                            width: 6,
+                          ),
+                        ],
+                      ),
                     ),
-                    const InputField(
+                    InputField(
                       label: "Repeat",
-                      hintText: "",
+                      hintText: selectedRepeat,
+                       icon :Row(
+                    children: [
+                      DropdownButton(
+                        borderRadius: BorderRadius.circular(10),
+                        dropdownColor: Colors.pink,
+                        items: repeatList
+                            .map(
+                              (value) => DropdownMenuItem(
+                                value: value,
+                                child: Text(
+                                  value,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                        icon: const Icon(
+                          Icons.keyboard_arrow_down,
+                          color: Colors.grey,
+                        ),
+                        iconSize: 32,
+                        elevation: 4,
+                        underline: Container(
+                          height: 0,
+                        ),
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 16,
+                        ),
+                        onChanged: (newValue) {
+                          setState(() {
+                            selectedRepeat = newValue as String;
+                          });
+                        },
+                      ),
+                      const SizedBox(
+                        width: 6,
+                      ),
+                    ],
+                  ),
+
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -115,12 +229,16 @@ class _AddTaskPageState extends State<AddTaskPage> {
                         ),
                         FilledButton(
                           onPressed: () {},
-                          style:  ButtonStyle(
-                            backgroundColor: const WidgetStatePropertyAll(Colors.pink),
-                            shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-                              borderRadius:BorderRadius.circular(12)
-                            ))
-                          ),
+                          style: ButtonStyle(
+                              elevation: const WidgetStatePropertyAll(14),
+                              shadowColor: const WidgetStatePropertyAll(
+                                  Color.fromARGB(197, 0, 0, 0)),
+                              backgroundColor:
+                                  const WidgetStatePropertyAll(Colors.pink),
+                              shape: WidgetStatePropertyAll(
+                                  RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(12)))),
                           child: const Text(
                             "Create Task",
                           ),
@@ -131,5 +249,41 @@ class _AddTaskPageState extends State<AddTaskPage> {
             ),
           ),
         ));
+  }
+
+  getDateFromUser() async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      firstDate: DateTime(2024),
+      lastDate: DateTime(2030),
+      initialDate: selectedDate,
+    );
+    setState(() {
+      selectedDate = pickedDate!;
+    });
+  }
+
+  _getTimeFromUser({required bool isStartTime}) async {
+    TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: isStartTime
+          ? TimeOfDay.fromDateTime(DateTime.now())
+          : TimeOfDay.fromDateTime(
+              DateTime.now().add(const Duration(minutes: 15))),
+    );
+
+    String formattedTime = pickedTime!.format(context);
+
+    if (isStartTime) {
+      setState(() {
+        startTIme = formattedTime;
+      });
+    }
+
+    if (!isStartTime) {
+      setState(() {
+        endTIme = formattedTime;
+      });
+    }
   }
 }

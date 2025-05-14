@@ -31,14 +31,21 @@ class InputField extends StatelessWidget {
                 border: Border.all(color: Colors.grey)),
             child: Padding(
               padding: const EdgeInsets.only(left: 15),
-              child: TextFormField(
-                decoration: InputDecoration(
-                    hintText: hintText,
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.pink),
-                    ),
-                    enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.transparent))),
+              child: Row(
+                children:[ 
+                  Expanded(
+                    child: TextFormField(
+                    decoration: InputDecoration(
+                        hintText: hintText,
+                        focusedBorder: const UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.pink),
+                        ),
+                        enabledBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.transparent))),
+                                    ),
+                  ),
+                  icon??Container()
+                ]
               ),
             ),
           )
